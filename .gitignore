@@ -1,8 +1,8 @@
 .env
 .env.demo
-resources/secrets/
-resources/secrets/.env
-resources/secrets/*.json
+# resources/secrets: solo .gitkeep se versiona; el resto nunca se sincroniza
+resources/secrets/*
+!resources/secrets/.gitkeep
 .venv/
 __pycache__/
 *.pyc
