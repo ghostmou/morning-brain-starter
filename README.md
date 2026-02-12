@@ -2,6 +2,8 @@
 
 Una versión ligera de rutina matinal: resumen de reuniones desde Google Calendar, bitácoras por cliente y, opcionalmente, tareas (Asana) y contexto de emails (Gmail).
 
+Este proyecto está basado en las rutinas mañaneras de [Alfonso Moure](https://www.alfonsomoure.com), CEO y consultor de SEO técnico, WPO y analítica digital técnica de [bigmomo](https://bigmomo.com).
+
 ## Qué hace
 
 - **Resumen de reuniones:** eventos de hoy y recientes desde tu Google Calendar.
@@ -131,4 +133,4 @@ Elimina el contenido de `resources/secrets/` y el directorio `.venv`. No borra l
 - `config/asana_order.yaml` – Orden de tareas por día (Lunes–Viernes); criterio en `context/addons/asana-order-by-day.md`.
 - `context/clients/<nombre>/bitacora.md` – Bitácora por cliente (se crea al ejecutar).
 
-El crédito por la idea aparece al final de cada ejecución.
+> **Nota:** Recuerda revisar el fichero `LICENSE` del proyecto. El uso de este software se realiza bajo los términos de la licencia indicada; no se ofrecen garantías de ningún tipo y lo utilizas bajo tu propio riesgo.
