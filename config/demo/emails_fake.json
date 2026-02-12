@@ -1,0 +1,50 @@
+[
+  {
+    "id": "demo-1",
+    "subject": "Rocinante Corp – Confirmación ventana mantenimiento Tycho (marzo)",
+    "from": "ops@tycho-station.org",
+    "date": "Fri, 7 Feb 2025 09:12:00 +0000"
+  },
+  {
+    "id": "demo-2",
+    "subject": "Re: Oferta ampliación SLA – EVA y armamento",
+    "from": "holden@rocinante-corp.org",
+    "date": "Thu, 6 Feb 2025 14:22:00 +0000"
+  },
+  {
+    "id": "demo-3",
+    "subject": "Tycho – Contrato suministros a largo plazo (Acme)",
+    "from": "compras@acme-orbital.com",
+    "date": "Wed, 5 Feb 2025 11:05:00 +0000"
+  },
+  {
+    "id": "demo-4",
+    "subject": "MCRN – Briefing operación conjunta (preliminar)",
+    "from": "mcrn.logistics@mcr.mars",
+    "date": "Tue, 4 Feb 2025 08:00:00 +0000"
+  },
+  {
+    "id": "demo-5",
+    "subject": "Proyecto Proteus – Decisión go/no-go (confidencial)",
+    "from": "proteus@mao-kwikowski.com",
+    "date": "Thu, 6 Feb 2025 16:45:00 +0000"
+  },
+  {
+    "id": "demo-6",
+    "subject": "Nave 7 – Envío componentes (MCR → Tycho)",
+    "from": "logistica@mcr.mars",
+    "date": "Mon, 3 Feb 2025 07:30:00 +0000"
+  },
+  {
+    "id": "demo-7",
+    "subject": "Rocinante – Recordatorio revisión trimestral drive",
+    "from": "soporte@rocinante-corp.org",
+    "date": "Fri, 31 Jan 2025 12:00:00 +0000"
+  },
+  {
+    "id": "demo-8",
+    "subject": "Acme – Extensión validez oferta hasta 31/01",
+    "from": "fred.johnson@tycho-station.org",
+    "date": "Tue, 14 Jan 2025 10:15:00 +0000"
+  }
+]

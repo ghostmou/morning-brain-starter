@@ -1,0 +1,37 @@
+# Orden de tareas por día de la semana (solo nombres de proyecto, sin clientes).
+# El morning muestra las tareas ordenadas por esta prioridad.
+# Claves: Monday, Tuesday, Wednesday, Thursday, Friday (inglés, como devuelve datetime).
+# Primeros de cada día: 2 proyectos de cliente prioritarios; luego el resto (Deep Work, Marketing, etc.).
+
+Monday:
+  - Tycho
+  - Rocinante
+  - Deep Work
+  - Marketing
+  - Management
+  - Personal
+Tuesday:
+  - MCR
+  - Acme
+  - Marketing
+  - Business Development
+  - Management
+  - Personal
+Wednesday:
+  - Mao-Kwikowski
+  - Tycho
+  - Deep Work
+  - Marketing
+  - Personal
+Thursday:
+  - SOPs
+  - Management
+  - Marketing
+  - Personal
+Friday:
+  - Acme
+  - Mao-Kwikowski
+  - Management
+  - Marketing
+  - Personal
+  - Wrap-up

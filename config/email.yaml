@@ -1,0 +1,11 @@
+# Opcional: configuración para sincronizar emails (Gmail).
+# Solo se usa si en setup_oauth añadiste el scope de Gmail.
+
+# Etiqueta de Gmail a leer (dejar vacío para usar "INBOX")
+label: INBOX
+
+# Número máximo de mensajes a traer (por defecto 20)
+max_messages: 20
+
+# Días atrás para filtrar (por defecto 7)
+# days_back: 7
