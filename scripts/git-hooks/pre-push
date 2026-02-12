@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+# Pre-push hook: bloquea envío de contenido sensible al remoto (GitHub, etc.)
+# Instalar: cp scripts/git-hooks/pre-push .git/hooks/pre-push && chmod +x .git/hooks/pre-push
+
+set -e
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [ -z "$remote_sha" ] && remote_sha="$(git rev-parse --verify "$remote_ref" 2>/dev/null || true)"
+  # remote_sha vacío o 40 ceros = rama nueva en remoto (árbol vacío = 4b825dc...)
+  if [[ -z "$remote_sha" || "$remote_sha" =~ ^0+$ ]]; then
+    files=$(git diff --name-only 4b825dc642cb6eb9a060e54bf8d69288fbee4904 "$local_sha" 2>/dev/null || true)
+  else
+    files=$(git diff --name-only "$remote_sha" "$local_sha" 2>/dev/null || true)
+  fi
+  [ -z "$files" ] && continue
+
+  errors=()
+
+  for f in $files; do
+    [ ! -f "$f" ] && continue
+
+    # Patrones sensibles (todos los ficheros)
+    if grep -qE '(client_secret|api_key|access_token|refresh_token|bearer\s+[a-zA-Z0-9_-]{20,}|password\s*=\s*["\047][^"\047]+["\047])' "$f" 2>/dev/null; then
+      errors+=("$f: posible secreto/token de API o OAuth")
+    fi
+
+    # Nombres personales solo en skills, comandos y código (excluir LICENSE)
+    if [[ "$f" != "LICENSE" ]] && [[ "$f" == .cursor/skills/* || "$f" == .cursor/commands/* || "$f" == *.py || "$f" == *.js || "$f" == *.ts ]]; then
+      if grep -qE '(Alfonso Moure|bigmomo)' "$f" 2>/dev/null; then
+        errors+=("$f: nombre personal hardcodeado (Alfonso Moure o bigmomo)")
+      fi
+    fi
+  done
+
+  if [ ${#errors[@]} -gt 0 ]; then
+    echo ""
+    echo "❌ Pre-push bloqueado: contenido sensible detectado"
+    echo ""
+    printf '%s\n' "${errors[@]}"
+    echo ""
+    echo "Revisa y elimina el contenido antes de hacer push."
+    exit 1
+  fi
+done
+
+exit 0

@@ -1,0 +1,5 @@
+id: tycho
+name: Tycho
+description: "Cliente demo – Tycho (ficción)"
+website: https://example.com
+# Projects are discovered by scanning projects/ directory

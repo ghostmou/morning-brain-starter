@@ -1,0 +1,10 @@
+---
+description: Usar python3 o venv al ejecutar comandos Python en terminal
+globs: 
+alwaysApply: true
+---
+
+# Terminal y Python
+
+- Al ejecutar scripts o módulos Python desde la terminal en este proyecto, si el comando usa `python` y falla con **"command not found"**, usar **`python3`** en su lugar (habitual en macOS).
+- Preferir el intérprete del venv cuando exista: **`.venv/bin/python`** (Mac/Linux) o **`.venv\Scripts\python.exe`** (Windows), desde la raíz del proyecto.

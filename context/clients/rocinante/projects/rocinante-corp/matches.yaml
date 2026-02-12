@@ -1,0 +1,7 @@
+# Mapeo calendario/Asana para demo. Sin GIDs reales.
+calendar:
+  matching:
+    keywords:
+      - rocinante
+asana:
+  sync_enabled: false

@@ -1,0 +1,16 @@
+---
+description: Reglas para añadir Meet y activar transcripciones en citas
+globs: 
+alwaysApply: false
+---
+
+# Calendario: Meet y transcripciones
+
+- Cuando el usuario pida **añadir Meet** a citas, **activar transcripciones** o ejecutar la CLI del calendario para Meet/transcripción, seguir las instrucciones del comando **calendar-meet-transcription** (`.cursor/commands/calendar-meet-transcription.md`).
+- Usar siempre el Python del venv desde la raíz: `.venv/bin/python` (Mac/Linux) o `.venv\Scripts\python.exe` (Windows).
+- Comandos típicos:
+  - Añadir Meet a mis citas de la semana: `python -m scripts.calendar_lite --week --add-meet --add-meet-my-events-only`
+  - Activar transcripción solo en citas donde soy organizador/invitado: `python -m scripts.calendar_lite --week --add-transcription-reminder`
+  - **Activar transcripción en todas las citas con Meet** (p. ej. "activa las transcripciones de las llamadas"): `python -m scripts.calendar_lite --week --add-transcription-reminder --transcription-all`
+  - Ambas cosas (hoy, solo mis citas): `python -m scripts.calendar_lite --today --add-meet --add-transcription-reminder --add-meet-my-events-only`
+- La **transcripción real** (Meet API) requiere scope `meetings.space.settings` y Google Meet API habilitada en GCP; si no, se usa el recordatorio en la descripción del evento.

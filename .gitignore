@@ -1,0 +1,27 @@
+.env
+.env.demo
+resources/secrets/
+resources/secrets/.env
+resources/secrets/*.json
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Config y reglas locales (solo esta instancia; no las descargan otros)
+config/calendar.local.yaml
+config/demo_gmail_fake.yaml
+.cursor/rules/local.mdc
+.cursor/rules/demo-gmail-fake.mdc
+
+# Solo se versionan _example y los clientes demo (ficción). Cualquier otro cliente queda ignorado.
+context/clients/*/
+!context/clients/_example/
+!context/clients/tycho/
+!context/clients/rocinante/
+!context/clients/mao-kwikowski/
+!context/clients/mcr/
+!context/clients/acme/

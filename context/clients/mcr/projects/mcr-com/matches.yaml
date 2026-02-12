@@ -1,0 +1,7 @@
+# Mapeo calendario/Asana para demo. Sin GIDs reales.
+calendar:
+  matching:
+    keywords:
+      - mcr
+asana:
+  sync_enabled: false

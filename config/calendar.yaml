@@ -1,0 +1,10 @@
+# Calendarios que revisa el morning. Nombres exactos como en Google Calendar.
+# Si está vacío o no existe, se usa solo el calendario principal (primary).
+# Ejemplo:
+# calendars:
+#   - Trabajo
+#   - Personal
+#   - Morning demo
+
+calendars:
+  - Demo #hechoConIA

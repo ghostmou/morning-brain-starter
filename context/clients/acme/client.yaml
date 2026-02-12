@@ -1,0 +1,5 @@
+id: acme
+name: Acme
+description: "Cliente demo – Acme (ficción)"
+website: https://example.com
+# Projects are discovered by scanning projects/ directory

@@ -1,0 +1,16 @@
+# Mapeo de nombre de cliente -> substrings para reconocer el evento en el título del calendario.
+# Si el título del evento contiene alguno de los substrings, se asigna a ese cliente.
+# Los nombres deben coincidir con las carpetas en context/clients/.
+
+clients:
+  tycho:
+    - tycho
+  rocinante:
+    - rocinante
+  mao-kwikowski:
+    - mao
+    - kwikowski
+  mcr:
+    - mcr
+  acme:
+    - acme
