@@ -1,0 +1,8 @@
+# Mapeo calendario/Asana para demo. Sin GIDs reales.
+calendar:
+  matching:
+    keywords:
+      - mao
+      - kwikowski
+asana:
+  sync_enabled: false

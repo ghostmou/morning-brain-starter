@@ -1,0 +1,5 @@
+id: rocinante
+name: Rocinante Corp
+description: "Cliente demo – Rocinante Corp (ficción)"
+website: https://example.com
+# Projects are discovered by scanning projects/ directory
