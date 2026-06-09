@@ -4,6 +4,14 @@ Una versión ligera de rutina matinal: resumen de reuniones desde Google Calenda
 
 Este proyecto está basado en las rutinas mañaneras de [Alfonso Moure](https://www.alfonsomoure.com), CEO y consultor de SEO técnico, WPO y analítica digital técnica de [bigmomo](https://bigmomo.com).
 
+> ### 📬 Suscríbete a mi newsletter
+>
+> En mi Substack comparto cómo construir tu propio stack de IA para **SEO, automatización, analítica y productividad**: rutinas matinales, agentes, detección de anomalías y trucos para liberarte de las tareas rutinarias y centrarte en lo importante.
+>
+> ### 👉 [**Suscríbete aquí »**](https://alfonsomoure.substack.com)
+>
+> *¿Quieres ver de dónde sale el detector de anomalías de este repo? Empieza por el post ["Tu dashboard te miente: detección de anomalías con IA"](https://alfonsomoure.substack.com/p/deteccion-de-anomalias-con-ia).*
+
 ## Qué hace
 
 - **Resumen de reuniones:** eventos de hoy y recientes desde tu Google Calendar.
