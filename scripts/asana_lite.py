@@ -1,13 +1,16 @@
 """
 Listar tareas de hoy (Asana). Opcional: solo se usa si ASANA_ACCESS_TOKEN está definido.
 Ordenación por día de la semana según config/asana_order.yaml (addon: context/addons/asana-order-by-day.md).
-Incluye: mover tareas pendientes de ayer a hoy (--move-yesterday-to-today).
+Incluye: mover tareas pendientes de ayer a hoy (--move-yesterday-to-today),
+y mover fechas entre días (--move-due, --shift-due; ver skill asana-due-dates).
 """
 
 import argparse
 import os
-from datetime import datetime, timedelta
+import re
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from typing import Optional, Sequence
 
 _project_root = Path(__file__).resolve().parent.parent
 if str(_project_root) not in os.sys.path:
@@ -126,6 +129,30 @@ def _resolve_today_section_gid(token: str, project_gid: str) -> str:
     return ""
 
 
+def _asana_get_paginated(token: str, url: str) -> list:
+    """GET paginado de la API Asana (limit=100). Devuelve la lista acumulada de data[]."""
+    import urllib.request
+    import json
+
+    sep = "&" if "?" in url else "?"
+    if "limit=" not in url:
+        url = url + sep + "limit=100"
+        sep = "&"
+    items: list = []
+    offset = None
+    while True:
+        page_url = url if not offset else url + sep + "offset=" + offset
+        req = urllib.request.Request(page_url, headers={"Authorization": "Bearer " + token})
+        with urllib.request.urlopen(req) as r:
+            body = json.loads(r.read().decode())
+        items.extend(body.get("data", []))
+        next_page = body.get("next_page") or {}
+        offset = next_page.get("offset")
+        if not offset:
+            break
+    return items
+
+
 def get_tasks_today() -> list:
     """Lista de tareas asignadas al usuario actual con due_date = hoy.
     Si ASANA_INBOX_PROJECT_GID está definido, asegura que todas las tareas de hoy
@@ -172,12 +199,10 @@ def get_tasks_today() -> list:
             "assignee=" + user_gid + "&workspace=" + workspace_gid +
             "&completed_since=now&opt_fields=" + opt_fields
         )
-        req = urllib.request.Request(url, headers={"Authorization": "Bearer " + token})
-        with urllib.request.urlopen(req) as r:
-            data = json.loads(r.read().decode())
+        tasks = _asana_get_paginated(token, url)
 
         out = []
-        for t in data.get("data", []):
+        for t in tasks:
             if t.get("due_on") != today:
                 continue
             assignee = t.get("assignee")
@@ -262,11 +287,9 @@ def get_tasks_due_on(date_iso: str) -> list:
                 "assignee=" + user_gid + "&workspace=" + workspace_gid +
                 "&completed_since=now&opt_fields=" + opt_fields
             )
-        req = urllib.request.Request(url, headers={"Authorization": "Bearer " + token})
-        with urllib.request.urlopen(req) as r:
-            data = json.loads(r.read().decode())
+        tasks = _asana_get_paginated(token, url)
         out = []
-        for t in data.get("data", []):
+        for t in tasks:
             if t.get("due_on") != date_iso:
                 continue
             if t.get("completed"):
@@ -284,6 +307,80 @@ def get_tasks_due_on(date_iso: str) -> list:
         return out
     except Exception:
         return []
+
+
+def _utc_today() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%d")
+
+
+def resolve_due_date_arg(spec: str) -> str:
+    """
+    Convierte una fecha YYYY-MM-DD o las palabras today / yesterday / tomorrow (UTC)
+    en YYYY-MM-DD. Lanza ValueError si el valor no es válido.
+    """
+    s = (spec or "").strip()
+    if not s:
+        raise ValueError("fecha vacía")
+    if re.match(r"^\d{4}-\d{2}-\d{2}$", s):
+        return s
+    key = s.lower()
+    now = datetime.now(timezone.utc).date()
+    if key == "today":
+        return now.strftime("%Y-%m-%d")
+    if key == "yesterday":
+        return (now - timedelta(days=1)).strftime("%Y-%m-%d")
+    if key == "tomorrow":
+        return (now + timedelta(days=1)).strftime("%Y-%m-%d")
+    raise ValueError(
+        "fecha inválida: usa YYYY-MM-DD o today, yesterday, tomorrow (UTC)"
+    )
+
+
+def tasks_pending_due_on(
+    from_iso: str, only_names: Optional[Sequence[str]] = None
+) -> list:
+    """Tareas pendientes con due_on == from_iso; si only_names, solo las que coinciden por nombre exacto."""
+    tasks = get_tasks_due_on(from_iso)
+    if not only_names:
+        return tasks
+    wanted = {n.strip() for n in only_names if n and str(n).strip()}
+    if not wanted:
+        return tasks
+    return [t for t in tasks if t.get("name") in wanted]
+
+
+def move_tasks_due(
+    from_iso: str,
+    to_iso: str,
+    only_names: Optional[Sequence[str]] = None,
+    dry_run: bool = False,
+) -> tuple[int, list[dict]]:
+    """
+    Mueve todas las tareas pendientes con due_on = from_iso a to_iso.
+    Si only_names está definido y no vacío, solo esas tareas (nombre exacto).
+    Devuelve (n_actualizadas_o_simuladas, lista_de_tareas_afectadas).
+    """
+    tasks = tasks_pending_due_on(from_iso, only_names)
+    if dry_run:
+        return len(tasks), tasks
+    moved = 0
+    for t in tasks:
+        gid = t.get("gid")
+        if gid and update_task_due(gid, to_iso):
+            moved += 1
+    return moved, tasks
+
+
+def shift_tasks_due(
+    from_iso: str,
+    offset_days: int,
+    only_names: Optional[Sequence[str]] = None,
+    dry_run: bool = False,
+) -> tuple[int, list[dict]]:
+    """Mueve tareas con due_on = from_iso sumando offset_days al calendario (UTC)."""
+    d0 = datetime.strptime(from_iso, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    to_iso = (d0 + timedelta(days=offset_days)).strftime("%Y-%m-%d")
+    return move_tasks_due(from_iso, to_iso, only_names=only_names, dry_run=dry_run)
 
 
 def update_task_due(task_gid: str, due_on: str) -> bool:
@@ -313,15 +410,10 @@ def update_task_due(task_gid: str, due_on: str) -> bool:
 
 def move_yesterday_to_today() -> int:
     """Mueve las tareas pendientes con fecha de ayer a hoy. Devuelve el número de tareas actualizadas."""
-    yesterday = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%d")
-    today = datetime.utcnow().strftime("%Y-%m-%d")
-    tasks = get_tasks_due_on(yesterday)
-    moved = 0
-    for t in tasks:
-        gid = t.get("gid")
-        if gid and update_task_due(gid, today):
-            moved += 1
-    return moved
+    yesterday = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d")
+    today = _utc_today()
+    n, _ = move_tasks_due(yesterday, today)
+    return n
 
 
 def _strip_html(html: str) -> str:
@@ -356,11 +448,9 @@ def get_tasks_completed_on(date_iso: str) -> list:
             "assignee=" + user_gid + "&workspace=" + workspace_gid +
             "&completed_since=" + since + "&opt_fields=" + opt_fields
         )
-        req = urllib.request.Request(url, headers={"Authorization": "Bearer " + token})
-        with urllib.request.urlopen(req) as r:
-            data = json.loads(r.read().decode())
+        tasks = _asana_get_paginated(token, url)
         out = []
-        for t in data.get("data", []):
+        for t in tasks:
             if not t.get("completed"):
                 continue
             completed_at = t.get("completed_at") or ""
@@ -387,7 +477,9 @@ def get_tasks_completed_on(date_iso: str) -> list:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Tareas de hoy (Asana). Opciones: mover ayer→hoy, tareas realizadas→bitácora.")
+    parser = argparse.ArgumentParser(
+        description="Tareas de hoy (Asana). Opciones: mover ayer→hoy, mover fechas, tareas realizadas→bitácora."
+    )
     parser.add_argument(
         "--move-yesterday-to-today",
         action="store_true",
@@ -398,19 +490,106 @@ if __name__ == "__main__":
         action="store_true",
         help="Recoger tareas realizadas ayer, leer descripción e incorporar a bitácora del cliente.",
     )
+    parser.add_argument(
+        "--move-due",
+        nargs=2,
+        metavar=("FROM", "TO"),
+        default=None,
+        help="Mover tareas pendientes con due_on=FROM a due_on=TO (YYYY-MM-DD o today/yesterday/tomorrow, UTC).",
+    )
+    parser.add_argument(
+        "--shift-due",
+        nargs=2,
+        metavar=("FROM_DATE", "OFFSET_DAYS"),
+        default=None,
+        help="Mover tareas con due_on=FROM_DATE sumando OFFSET_DAYS al calendario (ej. 7 = misma weekday la semana siguiente).",
+    )
+    parser.add_argument(
+        "--only",
+        nargs="*",
+        default=[],
+        metavar="TASK_NAME",
+        help="Con --move-due o --shift-due: solo estas tareas (nombre exacto como en Asana).",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Con --move-due o --shift-due: listar tareas afectadas sin actualizar Asana.",
+    )
     args = parser.parse_args()
 
     load_env()
-    if args.move_yesterday_to_today:
+
+    mode_count = sum(
+        1
+        for x in (
+            args.move_yesterday_to_today,
+            args.completed_yesterday_to_bitacora,
+            args.move_due is not None,
+            args.shift_due is not None,
+        )
+        if x
+    )
+    if mode_count > 1:
+        parser.error(
+            "Elige solo una de: --move-yesterday-to-today, --completed-yesterday-to-bitacora, --move-due, --shift-due"
+        )
+
+    if args.move_due:
+        try:
+            from_iso = resolve_due_date_arg(args.move_due[0])
+            to_iso = resolve_due_date_arg(args.move_due[1])
+        except ValueError as e:
+            parser.error(str(e))
+        only = args.only if args.only else None
+        n, affected = move_tasks_due(
+            from_iso, to_iso, only_names=only, dry_run=args.dry_run
+        )
+        if args.only:
+            wanted = {str(x).strip() for x in args.only if str(x).strip()}
+            found = {t.get("name") for t in affected}
+            missing = wanted - found
+            if missing:
+                print("Aviso: sin coincidencia en la fecha de origen:", ", ".join(sorted(missing)))
+        label = "simulación" if args.dry_run else "hecho"
+        print(f"{from_iso} -> {to_iso} ({label}): {n} tarea(s)")
+        for t in affected:
+            print(" ", t.get("name", ""))
+    elif args.shift_due:
+        try:
+            from_iso = resolve_due_date_arg(args.shift_due[0])
+            offset = int(args.shift_due[1])
+        except ValueError as e:
+            parser.error(str(e))
+        only = args.only if args.only else None
+        d0 = datetime.strptime(from_iso, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+        to_iso = (d0 + timedelta(days=offset)).strftime("%Y-%m-%d")
+        n, affected = shift_tasks_due(
+            from_iso, offset, only_names=only, dry_run=args.dry_run
+        )
+        if args.only:
+            wanted = {str(x).strip() for x in args.only if str(x).strip()}
+            found = {t.get("name") for t in affected}
+            missing = wanted - found
+            if missing:
+                print("Aviso: sin coincidencia en la fecha de origen:", ", ".join(sorted(missing)))
+        label = "simulación" if args.dry_run else "hecho"
+        print(f"{from_iso} +{offset}d -> {to_iso} ({label}): {n} tarea(s)")
+        for t in affected:
+            print(" ", t.get("name", ""))
+    elif args.move_yesterday_to_today:
         n = move_yesterday_to_today()
         print("Tareas movidas de ayer a hoy:", n)
     elif args.completed_yesterday_to_bitacora:
         from scripts import bitacora_append
-        yesterday = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%d")
+
+        yesterday = (datetime.now(timezone.utc) - timedelta(days=1)).strftime("%Y-%m-%d")
         entries = get_tasks_completed_on(yesterday)
         added = bitacora_append.process_completed_tasks(entries)
         print("Tareas realizadas ayer → bitácora:", len(added), "entrada(s) añadida(s).")
     else:
+        if args.only or args.dry_run:
+            parser.error("--only y --dry-run requieren --move-due o --shift-due")
         tasks = get_tasks_today()
         print("Tareas hoy:", len(tasks))
         for t in tasks:
