@@ -1,0 +1,55 @@
+# Plantillas de acciones sugeridas (runtime).
+# Textos maestros editables por humanos: .cursor/skills/morning-anomalies/anomalies-reporting.md §5.2
+# El código solo sustituye {context} con la línea de contexto del finding.
+#
+# Escala de severidad (todos los findings son DESVIACIONES; el signo marca la polaridad):
+#   Impacto negativo:  leve  <  serio  <  terrorifico
+#   Señal positiva:    mejora_leve  <  alto  <  muy_alto
+
+ga4:
+  # --- Impacto negativo ---
+  leve: >-
+    [Seguimiento] {context} — Anotar y revisar en el próximo pase semanal:
+    ¿sigue la tendencia? Comprobar que no coincida con festivo o cambio menor en plantilla.
+  serio: >-
+    [Hoy] {context} — Revisar tracking GA4/GTM, deploys recientes en el grupo de páginas,
+    stock o checkout, y campañas que cambien mix de tráfico a esas URLs.
+  terrorifico: >-
+    [Urgente] {context} — Validar hoy mismo: evento/conversión en GTM,
+    caída de sesiones en el mismo grupo, error en checkout o cambio de atribución.
+    Cruzar con bitácora y core updates del informe antes de tocar campañas.
+  # --- Señal positiva ---
+  mejora_leve: >-
+    [Positivo] {context} — Subida leve; anotar qué cambió (deploy, campaña, contenido)
+    para confirmar si es real y replicable en el próximo ciclo.
+  alto: >-
+    [Positivo] {context} — Mejora clara: identificar la palanca (lanzamiento, campaña,
+    cambio de plantilla o tracking) y valorar reforzarla o extenderla a páginas similares.
+  muy_alto: >-
+    [Positivo] {context} — Salto fuerte: confirmar que no es un artefacto de medición
+    (doble disparo de evento, cambio de atribución) antes de celebrarlo; si es real,
+    documentar la causa y capitalizarla.
+
+gsc:
+  # --- Impacto negativo ---
+  leve: >-
+    [Seguimiento] {context} — Revisar en próximo ciclo: SERP del grupo de búsquedas,
+    estacionalidad y un día más de datos; no escalar a cliente aún.
+  serio: >-
+    [Hoy] {context} — Revisar páginas del grupo, cannibalización,
+    cobertura de contenido y si hay core update en la ventana del informe.
+  terrorifico: >-
+    [Urgente] {context} — Prioridad hoy: impacto en URLs principales del grupo,
+    pérdida de impresiones vs clicks, posible penalización o bug de medición GSC.
+    Documentar en bitácora y alinear con equipo antes de cambios masivos en el sitio.
+  # --- Señal positiva ---
+  mejora_leve: >-
+    [Positivo] {context} — Subida leve en visibilidad/clics; vigilar si consolida
+    y anotar a qué páginas o queries se debe.
+  alto: >-
+    [Positivo] {context} — Ganancia clara en SERP: identificar qué URLs/queries la
+    impulsan, comprobar CTR y posición, y reforzar contenido o enlazado interno donde aplique.
+  muy_alto: >-
+    [Positivo] {context} — Salto fuerte de visibilidad: confirmar que no es estacional
+    o un cambio de SERP puntual; si es estructural, documentar la causa y priorizar
+    su mantenimiento.
