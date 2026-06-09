@@ -1,0 +1,66 @@
+query_collections:
+  - id: topic_sector7
+    label: "Sector 7 (queries)"
+    match_mode: any
+    filters:
+      - type: contains
+        value: "sector 7"
+      - type: contains
+        value: "materiales estación"
+
+  - id: topic_nave7
+    label: "Nave 7 (queries)"
+    match_mode: any
+    filters:
+      - type: contains
+        value: "nave 7"
+
+page_collections:
+  - id: landings_sector7
+    label: "Portal sector 7"
+    match_mode: any
+    filters:
+      - type: contains
+        value: "/sector-7/"
+
+  - id: landings_nave7
+    label: "Landings Nave 7"
+    match_mode: any
+    filters:
+      - type: contains
+        value: "/nave-7/"
+
+controls:
+  - id: GA4_SECTOR7_01
+    source: ga4
+    collection_id: landings_sector7
+    metrics: [sessions, conversions]
+    primary_metric: conversions
+    label: "GA4 conversiones sector 7"
+
+  - id: GSC_TOPIC_S7_01
+    source: gsc_query
+    collection_id: topic_sector7
+    metrics: [clicks, impressions, position]
+    primary_metric: clicks
+    label: "GSC clics topic sector 7"
+
+  - id: GA4_SITE_01
+    source: ga4
+    metrics: [sessions, conversions]
+    primary_metric: sessions
+    label: "GA4 sesiones sitio"
+
+  - id: GSC_TOPIC_N7_01
+    source: gsc_query
+    collection_id: topic_nave7
+    metrics: [clicks, impressions, position]
+    primary_metric: clicks
+    label: "GSC clics topic Nave 7"
+
+  - id: GSC_PAGE_N7_01
+    source: gsc_page
+    collection_id: landings_nave7
+    metrics: [clicks, impressions, position]
+    primary_metric: clicks
+    label: "GSC clics landings Nave 7"

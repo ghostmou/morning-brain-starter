@@ -84,3 +84,6 @@ Confirmación de ventana para la Rocinante (escala programada marzo). Asignació
 - **2026-02-11** Tarea realizada: Inspección diques 1–4 – presupuesto reservado (proyecto: Tycho)
   Inspección programada mantenimiento. Diques 1 y 2 en buen estado; 3 y 4 requieren trabajos menores en Q2. Presupuesto reservado.
 - **2026-02-12** Call follow up Tycho<>usuario – 
+
+## 2026-06-04 · Deploy portal sector 7
+Publicado nuevo formulario de solicitud de presupuesto en `/sector-7/materiales/`; cambios en eventos GA4 de conversión. Vigilar métricas tras el despliegue.
