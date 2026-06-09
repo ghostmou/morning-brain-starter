@@ -10,6 +10,7 @@ Este proyecto está basado en las rutinas mañaneras de [Alfonso Moure](https://
 - **Bitácoras por cliente:** las reuniones se van acumulando en un archivo por cliente (según configuración).
 - **Opcional – Tareas:** si usas Asana, puedes listar y ordenar tus tareas del día.
 - **Opcional – Emails:** si usas Gmail, puedes sincronizar emails recientes como contexto adicional.
+- **Opcional – Alertas GA4/GSC:** detección de anomalías diarias e informe HTML por cliente (modo demo sintético sin APIs o live con OAuth). Ver [docs/ANOMALIES.md](docs/ANOMALIES.md).
 
 **Solo Google Calendar es obligatorio.** El proyecto funciona igual con solo Calendar: reuniones de hoy, recientes y bitácoras. Asana y Gmail son opcionales.
 
@@ -123,6 +124,18 @@ python3 scripts/reset_config.py   # o python, o .venv/bin/python
 
 Elimina el contenido de `resources/secrets/` y el directorio `.venv`. No borra la demo: mantiene `config/demo/` y (re)crea `config/demo_gmail_fake.yaml` para que el circuito de emails fake siga disponible. Luego puedes volver a configurar con el boarding o con `python3 scripts/setup_oauth.py`.
 
+## Alertas GA4/GSC (demo rápido)
+
+Sin configurar APIs adicionales puedes probar el detector con datos ficticios del cliente demo **Tycho**:
+
+```bash
+.venv/bin/python -m scripts.anomaly_detection.cli --mode seed-demo
+.venv/bin/python -m scripts.anomaly_detection.cli --mode run \
+  --date 2026-06-05 --synthetic --lab-root . --client-id tycho
+```
+
+Abre `output/anomalies/2026-06-05/tycho.html`. Documentación completa: [docs/ANOMALIES.md](docs/ANOMALIES.md).
+
 ## Estructura de carpetas
 
 - `resources/secrets/` – Aquí va tu `.env` (no se sube a control de versiones).
@@ -132,5 +145,10 @@ Elimina el contenido de `resources/secrets/` y el directorio `.venv`. No borra l
 - `config/demo/` – Emails fake para demo (The Expanse). Si creas `config/demo_gmail_fake.yaml` (gitignored), el morning usa esos en lugar de Gmail real. Ver `config/demo/README.md`.
 - `config/asana_order.yaml` – Orden de tareas por día (Lunes–Viernes); criterio en `context/addons/asana-order-by-day.md`.
 - `context/clients/<nombre>/bitacora.md` – Bitácora por cliente (se crea al ejecutar).
+- `context/clients/<nombre>/anomaly_controls.yaml` – Opcional: controles de alertas GA4/GSC.
+- `demo-data/<cliente>/` – CSV sintéticos para pruebas sin API.
+- `data/google_core_updates.csv` – Contexto de actualizaciones Google (sync opcional).
+- `scripts/anomaly_detection/` – Pipeline de detección de anomalías.
+- `docs/ANOMALIES.md` – Guía del módulo de alertas.
 
 > **Nota:** Recuerda revisar el fichero `LICENSE` del proyecto. El uso de este software se realiza bajo los términos de la licencia indicada; no se ofrecen garantías de ningún tipo y lo utilizas bajo tu propio riesgo.

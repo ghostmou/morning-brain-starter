@@ -42,6 +42,13 @@ Usa esta lista para preparar la demo sin exponer datos reales. El repo que compa
 - [ ] Comprobar que se listan los eventos del calendario de demo y que se crean/actualizan bitácoras en `context/clients/<NombreFicción>/bitacora.md`.
 - [ ] Las bitácoras generadas están ignoradas por `.gitignore` (solo se versiona `_example`); no se subirán por error.
 
+### 6. Demo alertas GA4/GSC (sintético, sin APIs extra)
+
+- [ ] `.venv/bin/python -m scripts.anomaly_detection.cli --mode seed-demo`
+- [ ] `.venv/bin/python -m scripts.anomaly_detection.cli --mode run --date 2026-06-05 --synthetic --lab-root . --client-id tycho`
+- [ ] Abrir `output/anomalies/2026-06-05/tycho.html`: **5 findings**, deploy **2026-06-04** en contexto, **May 2026 core update** (**2026-05-21**, fin rollout **2026-06-02**).
+- [ ] Ver `docs/ANOMALIES.md` si quieres explicar el módulo en la demo.
+
 ---
 
 ## Antes de subir el repo (compartir)

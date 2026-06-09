@@ -16,6 +16,27 @@ Todas las variables se definen en `resources/secrets/.env`. No subas ese archivo
 
 ℹ️ APIs a activar en el proyecto: **Google Calendar API**, **Gmail API**, **Google Docs API** y **Google Meet API** (esta última para poder activar la transcripción en citas con Meet desde el script).
 
+## Opcional (alertas GA4 + Search Console)
+
+Si usas el módulo de **anomalías matinales** (`docs/ANOMALIES.md`), activa también:
+
+- **Google Analytics Data API** (lectura GA4)
+- **Google Search Console API** (lectura GSC)
+
+Regenera el token OAuth para incluir los scopes nuevos:
+
+```bash
+.venv/bin/python scripts/setup_oauth.py --regenerate
+```
+
+Comprobar:
+
+```bash
+.venv/bin/python -m scripts.anomaly_detection.cli --mode test-auth
+```
+
+No hace falta variable extra en `.env`: se reutilizan `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` y `GOOGLE_REFRESH_TOKEN`.
+
 ℹ️ **Leer transcripciones desde Calendar:** el script `scripts/read_transcription_from_calendar.py` obtiene la call de ayer (o la fecha que indiques), busca en la descripción del evento un enlace a Google Docs y muestra el contenido. Necesita el scope **documents.readonly**. Si generaste el token antes de que se añadiera este scope, vuelve a ejecutar `scripts/setup_oauth.py` para que el token incluya acceso a Docs.
 
 ## Opcional (Asana)

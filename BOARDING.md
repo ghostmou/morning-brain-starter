@@ -33,6 +33,13 @@ El asistente hará lo siguiente **por ti** (sin pedirte que copies comandos):
 - **Preguntarte qué calendarios quieres que revise el morning** (nombres exactos como en Google Calendar). Los guarda en `config/calendar.yaml`; a partir de entonces el morning solo usa esos. Si dices "solo el principal" o "ninguno", se usa el calendario principal.
 - **Ejecutar el morning una primera vez** para comprobar que todo va bien (no tendrás que ejecutar nada tú).
 
+## Opcional: alertas GA4/GSC
+
+Si quieres el módulo de anomalías (ver [docs/ANOMALIES.md](docs/ANOMALIES.md)):
+
+- **Demo sin APIs extra:** el asistente puede ejecutar `seed-demo` + run sintético con el cliente ficticio Tycho.
+- **Live:** activar Analytics Data API y Search Console API en Google Cloud y regenerar OAuth (`scripts/setup_oauth.py --regenerate`).
+
 ## Qué esperar
 
 - **Emojis en cada paso:** el asistente usará emojis para que veas de un vistazo qué está haciendo (🐍 Python, 📦 entorno/dependencias, 🔐 credenciales, 🌐 conexión Google, 📋 Asana, 📅 morning, ✅ listo, ❌ error, 🎉 fin).
