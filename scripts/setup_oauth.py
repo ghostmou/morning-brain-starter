@@ -37,6 +37,9 @@ GOOGLE_SCOPES = [
     "https://www.googleapis.com/auth/gmail.readonly",
     # Docs: leer contenido de Docs enlazados (transcripciones en eventos de Calendar)
     "https://www.googleapis.com/auth/documents.readonly",
+    # GA4 + Search Console (alertas matinales, opcional)
+    "https://www.googleapis.com/auth/analytics.readonly",
+    "https://www.googleapis.com/auth/webmasters.readonly",
 ]
 
 
