@@ -22,6 +22,15 @@ Ejemplo de estilo al anunciar: *«Ahora miro tu agenda de hoy y preparo las vide
 - **Paso 5 – Transcripciones:** busca calls de ayer con Doc enlazado e importa a `context/.../meetings/transcripcion-*.md`.
 - **Paso 6 – Asana (tareas realizadas ayer → bitácora):** recoge las tareas completadas el día anterior en Asana, lee su descripción e incorpora una entrada (y la descripción) en la bitácora del cliente, igual que con las transcripciones.
 - **Paso 7 – Bitácoras:** entradas en `context/clients/<cliente>/bitacora.md` (reuniones, emails, Asana hoy, transcripciones, tareas realizadas ayer). Ver skill bitacora-update.
+- **Paso 8 – Alertas GA4/GSC (opcional):** detección de anomalías e informe HTML por cliente. Solo si `run_morning_anomalies: true` en la tabla Config. Ver skill `morning-anomalies`.
+
+## Config (tabla)
+
+| Clave | Default | Uso |
+|-------|---------|-----|
+| `run_morning_anomalies` | `false` | Si `true`, ejecutar paso 8 tras el paso 7 |
+
+Sin credenciales GA4/GSC: usar `--synthetic --lab-root .` (demo Tycho) o omitir el paso con mensaje claro.
 
 Cada acción tiene su **llamada CLI exacta**; no hace falta usar `run_morning.py`.
 
@@ -96,6 +105,18 @@ La siguiente llamada CLI hace eso:
 ```
 *Nota:* el paso 7 también importa transcripciones y procesa tareas realizadas ayer; los pasos 5 y 6 sirven para ejecutar solo esa parte si lo necesitas.
 
+**Paso 8 – Alertas GA4/GSC (opcional)**  
+Ejecuta el detector de anomalías para clientes con `anomaly_controls.yaml`. Genera HTML en `output/anomalies/<fecha>/`. En demo sin APIs: modo sintético con cliente `tycho`.  
+*Anuncio sugerido:* «Reviso si hay señales raras en GA4 y Search Console de tus clientes.»  
+Solo si `run_morning_anomalies: true`:
+
+```bash
+.venv/bin/python -m scripts.reporting.sync_google_core_updates --max-age-hours 168
+.venv/bin/python -m scripts.anomaly_detection.cli --mode run --date today --lab-root . --synthetic --client-id tycho
+```
+
+Para clientes reales con OAuth configurado, quitar `--synthetic` y usar `--clients-root context/clients` (y los `--client-id` que toquen). Resumir con skill `morning-anomalies` §0.
+
 ---
 
 ## Resumen (copiar/pegar)
@@ -126,7 +147,7 @@ CWD = raíz del proyecto.
 ```bash
 .venv/bin/python run_morning.py --step 3
 ```
-(Pasos 1–7.)
+(Pasos 1–8; el 8 solo si `run_morning_anomalies: true`.)
 
 ---
 
@@ -136,3 +157,4 @@ CWD = raíz del proyecto.
 - **Comando:** `.cursor/commands/morning-routine.md`
 - **Scripts:** `scripts/calendar_lite.py`, `scripts/asana_lite.py`, `scripts/email_lite.py`, `scripts/morning_step_bitacora.py`
 - **Orquestador:** `run_morning.py` (opcional)
+- **Reprogramar vencimientos Asana** (otro día, semana siguiente, selectivo): skill `.cursor/skills/asana-due-dates/SKILL.md` (`asana_lite.py --move-due`, `--shift-due`).
