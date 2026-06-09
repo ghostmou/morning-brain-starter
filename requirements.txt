@@ -4,3 +4,5 @@ google-auth-httplib2>=0.1.1
 asana>=5.0.0
 python-dotenv>=1.0.0
 PyYAML>=6.0
+google-analytics-data>=0.17.0
+pytest>=7.0.0

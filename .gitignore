@@ -10,6 +10,8 @@ __pycache__/
 .pytest_cache/
 .coverage
 htmlcov/
+output/
+data/.core_updates_synced_at
 
 # Config y reglas locales (solo esta instancia; no las descargan otros)
 config/calendar.local.yaml
